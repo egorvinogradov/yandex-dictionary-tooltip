@@ -1,0 +1,11 @@
+{
+  "name": "Перевод выделенного слова (Яндекс.Словари)",
+  "version": "1.0",
+  "description": "Перевод выделенного слова во всплывающей подсказке с помощью Яндекс.Словарей.",
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "permissions": ["tabs", "<all_urls>"],
+  "background_page": "background.html"
+}

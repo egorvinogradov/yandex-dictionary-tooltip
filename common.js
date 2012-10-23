@@ -1,0 +1,5 @@
+var Tanslator = {
+  init: function(){
+  	
+  },
+};
