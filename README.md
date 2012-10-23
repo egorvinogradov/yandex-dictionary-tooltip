@@ -1,0 +1,2 @@
+yandex-dictionary-tooltip
+=========================
