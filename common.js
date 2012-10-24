@@ -68,7 +68,7 @@ function funcToString(func, args){
 
 function loadData(url, data, onSuccess, onError){
   var request = new XMLHttpRequest();
-  var getUrl = (url, data){
+  var getUrl = function(url, data){
     return url + ( data ? '?' + param(data) : '' );
   };
   var onComplete = function(e){
@@ -118,6 +118,9 @@ function createEl(tagName, attributes){
 };
 
 function addEvent(elements, eventNames, callback, context){
+  elements = elements.length
+    ? elements
+    : [elements];
   eventNames = eventNames.split(' ');
   callback = !context
     ? callback
@@ -131,13 +134,13 @@ function addEvent(elements, eventNames, callback, context){
   });
 };
 
-function selectText(elem) {
+function selectText(elem){
   var range = document.createRange();
   range.selectNode(elem);
   getSelection().addRange(range);
 }
 
-function deselectText() {
+function deselectText(){
   getSelection().removeAllRanges();
 }
 
@@ -164,7 +167,7 @@ function getTextNodes(elem){
   var testNode = function(node){
     return node.nodeType === 3 && /[a-zа-я]/i.test(node.nodeValue);
   };
-  elem.childNodes.forEach(function(node){
+  Array.prototype.forEach.call(elem.childNodes, function(node){
     if ( testNode(node) ) {
       textNodes.push(node);
     }
@@ -178,13 +181,23 @@ function getWordsHtml(wordsText){
 };
 
 function getWordsText(wordsHtml){
-  return wordsText
+  return wordsHtml
     .replace(/<\/?word>/igm, '');
+};
+
+function appendArticlePopup(selectionEl){
+  // TODO: finish
+  console.log('show article popup:', selectionEl.innerHTML, selectionEl);
+};
+
+function appendWordTooltip(wordEl){
+  // TODO: finish
+  console.log('show word element:', wordEl.innerHTML, wordEl);
 };
 
 function wrapWords(event){
   var textNodes = getTextNodes(event.target);
-  textNodes.forEach(function(node){
+  Array.prototype.forEach.call(textNodes, function(node){
     var textParentEl = node.parentNode;
     var wordEl = createEl('textnode', {
       innerHTML: getWordsHtml(node.nodeValue)
@@ -192,17 +205,19 @@ function wrapWords(event){
     textParentEl
       .insertBefore(wordEl, node)
       .removeChild(node);
+    appendWordTooltip(wordEl);
   });
 };
 
 function unwrapWords(event){
   var textNodes = event.target.getElementsByTagName('textnode');
-  textNodes.forEach(function(node){
+  Array.prototype.forEach.call(textNodes, function(node){
     var textParentEl = node.parentNode;
     var word = document.createTextNode(getWordsText(node.innerHTML));
     textParentEl
-      .insertBefore(wordEl, node)
+      .insertBefore(word, node)
       .removeChild(node);
+    // TODO: remove word tooltip
   });
 };
 
@@ -215,6 +230,7 @@ function wrapSelection(event){
       parentEl.innerHTML = updateSelectionHtml(selection);
       selectionEl = parentEl.getElementsByTagName('selectiontext')[0];
       selectText(selectionEl);
+      appendArticlePopup(selectionEl);
     }
   }
 };
@@ -223,6 +239,7 @@ function unwrapSelection(event){
   if ( event.type === 'click' || (event.type === 'keydown' && event.keyCode === keyCodes.TAB) ) {
     var selections = document.getElementsByTagName('selectiontext');
     selections.forEach(restoreSelectionHtml);
+    // TODO: remove article popup first
   }
 };
 
